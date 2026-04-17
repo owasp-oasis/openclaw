@@ -424,8 +424,11 @@ export class TwilioProvider implements VoiceCallProvider {
     const url = new URL(this.currentPublicUrl);
     const origin = url.origin;
 
-    // Convert https:// to wss:// for WebSocket
-    const wsOrigin = origin.replace(/^https:\/\//, "wss://").replace(/^http:\/\//, "ws://");
+    // Convert https:// to wss:// for WebSocket (wss:// required; http:// origins are rejected)
+    if (!origin.startsWith("https://")) {
+      return null;
+    }
+    const wsOrigin = origin.replace(/^https:\/\//, "wss://");
 
     // Append the stream path
     const path = this.options.streamPath.startsWith("/")
