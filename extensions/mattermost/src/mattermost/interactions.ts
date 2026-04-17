@@ -168,8 +168,13 @@ export function resolveInteractionCallbackUrl(
 const interactionSecrets = new Map<string, string>();
 let defaultInteractionSecret: string | undefined;
 
+const INTERACTION_HMAC_KEY = process.env.MATTERMOST_INTERACTION_HMAC_KEY;
+if (!INTERACTION_HMAC_KEY) {
+  throw new Error("MATTERMOST_INTERACTION_HMAC_KEY environment variable must be set");
+}
+
 function deriveInteractionSecret(botToken: string): string {
-  return createHmac("sha256", "openclaw-mattermost-interactions").update(botToken).digest("hex");
+  return createHmac("sha256", INTERACTION_HMAC_KEY).update(botToken).digest("hex");
 }
 
 export function setInteractionSecret(accountIdOrBotToken: string, botToken?: string): void {
