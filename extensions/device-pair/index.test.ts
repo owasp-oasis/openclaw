@@ -79,7 +79,7 @@ function createApi(params?: {
       },
     },
     pluginConfig: {
-      publicUrl: "ws://51.79.175.165:18789",
+      publicUrl: "wss://51.79.175.165:18789",
       ...params?.pluginConfig,
     },
     runtime: (params?.runtime ?? {}) as OpenClawPluginApi["runtime"],
