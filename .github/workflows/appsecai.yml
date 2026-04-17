@@ -11,6 +11,8 @@ on:
 jobs:
   triageAndRemediation:
     runs-on: ubuntu-latest
+    env:
+      AUTO_CREATE_PRS: "true"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,3 +27,5 @@ jobs:
         uses: AppSecureAI/automation-action@v1
         with:
           file: semgrep-results.sarif
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
