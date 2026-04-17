@@ -27,4 +27,8 @@ COPY install-sh-common/cli-verify.sh /usr/local/install-sh-common/cli-verify.sh
 COPY install-sh-common/version-parse.sh /usr/local/install-sh-common/version-parse.sh
 COPY --chmod=755 install-sh-smoke/run.sh /usr/local/bin/openclaw-install-smoke
 
+RUN echo "node ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/node && chmod 0440 /etc/sudoers.d/node
+
+USER node
+
 ENTRYPOINT ["/usr/local/bin/openclaw-install-smoke"]
