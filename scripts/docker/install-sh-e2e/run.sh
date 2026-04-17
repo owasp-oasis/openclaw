@@ -72,13 +72,23 @@ else
 fi
 
 echo "==> Run official installer one-liner"
-if [[ "$INSTALL_TAG" == "beta" ]]; then
-  OPENCLAW_BETA=1 curl -fsSL "$INSTALL_URL" | bash
-elif [[ "$INSTALL_TAG" != "latest" ]]; then
-  OPENCLAW_VERSION="$INSTALL_TAG" curl -fsSL "$INSTALL_URL" | bash
-else
-  curl -fsSL "$INSTALL_URL" | bash
+INSTALLER_TMP="$(mktemp)"
+curl -fsSL "$INSTALL_URL" -o "$INSTALLER_TMP"
+EXPECTED_SHA="$(curl -fsSL "${INSTALL_URL}.sha256" | awk '{print $1}')"
+ACTUAL_SHA="$(sha256sum "$INSTALLER_TMP" | awk '{print $1}')"
+if [[ -z "$EXPECTED_SHA" || "$EXPECTED_SHA" != "$ACTUAL_SHA" ]]; then
+  echo "ERROR: install script SHA256 mismatch (expected=${EXPECTED_SHA} actual=${ACTUAL_SHA})" >&2
+  rm -f "$INSTALLER_TMP"
+  exit 1
 fi
+if [[ "$INSTALL_TAG" == "beta" ]]; then
+  OPENCLAW_BETA=1 bash "$INSTALLER_TMP"
+elif [[ "$INSTALL_TAG" != "latest" ]]; then
+  OPENCLAW_VERSION="$INSTALL_TAG" bash "$INSTALLER_TMP"
+else
+  bash "$INSTALLER_TMP"
+fi
+rm -f "$INSTALLER_TMP"
 
 echo "==> Verify installed version"
 INSTALLED_VERSION="$(openclaw --version 2>/dev/null | head -n 1 | tr -d '\r')"
