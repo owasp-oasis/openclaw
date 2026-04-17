@@ -385,11 +385,16 @@ function formatDuration(ms: number): string {
 }
 
 function esc(text: string) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+  return text.replace(/[&<>"']/g, (char) => {
+    switch (char) {
+      case "&": return "&amp;";
+      case "<": return "&lt;";
+      case ">": return "&gt;";
+      case '"': return "&quot;";
+      case "'": return "&#x27;";
+      default: return char;
+    }
+  });
 }
 
 function parseJsonObject(raw?: string): Record<string, unknown> | null {
