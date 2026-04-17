@@ -72,12 +72,15 @@ else
 fi
 
 echo "==> Run official installer one-liner"
+INSTALL_SCRIPT="$(mktemp)"
+trap 'rm -f "$INSTALL_SCRIPT"' EXIT
+curl -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"
 if [[ "$INSTALL_TAG" == "beta" ]]; then
-  OPENCLAW_BETA=1 curl -fsSL "$INSTALL_URL" | bash
+  OPENCLAW_BETA=1 bash "$INSTALL_SCRIPT"
 elif [[ "$INSTALL_TAG" != "latest" ]]; then
-  OPENCLAW_VERSION="$INSTALL_TAG" curl -fsSL "$INSTALL_URL" | bash
+  OPENCLAW_VERSION="$INSTALL_TAG" bash "$INSTALL_SCRIPT"
 else
-  curl -fsSL "$INSTALL_URL" | bash
+  bash "$INSTALL_SCRIPT"
 fi
 
 echo "==> Verify installed version"
