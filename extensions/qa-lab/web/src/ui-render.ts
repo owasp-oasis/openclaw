@@ -1,3 +1,5 @@
+import he from "he";
+
 /* ===== Shared types (unchanged from the bus protocol) ===== */
 
 export type Conversation = {
@@ -385,11 +387,7 @@ function formatDuration(ms: number): string {
 }
 
 function esc(text: string) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+  return he.encode(text);
 }
 
 function parseJsonObject(raw?: string): Record<string, unknown> | null {
