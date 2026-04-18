@@ -782,7 +782,7 @@ describe("gateway-status command", () => {
     const { runtime } = createRuntimeCapture();
     await withEnvAsync({ USER: "steipete" }, async () => {
       readBestEffortConfig.mockResolvedValueOnce(
-        makeRemoteGatewayConfig("ws://peters-mac-studio-1.sheep-coho.ts.net:18789"),
+        makeRemoteGatewayConfig("wss://peters-mac-studio-1.sheep-coho.ts.net:18789"),
       );
       resolveSshConfig.mockResolvedValueOnce({
         user: "steipete",
