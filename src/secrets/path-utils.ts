@@ -5,6 +5,12 @@ function isArrayIndexSegment(segment: string): boolean {
   return /^\d+$/.test(segment);
 }
 
+function rejectDangerousKey(key: string, path: string): void {
+  if (key === "__proto__" || key === "constructor" || key === "prototype") {
+    throw new Error(`Forbidden path segment "${key}" at ${path}.`);
+  }
+}
+
 function expectedContainer(nextSegment: string): "array" | "object" {
   return isArrayIndexSegment(nextSegment) ? "array" : "object";
 }
@@ -56,6 +62,7 @@ function traverseToLeafParent(params: {
         `Invalid path shape at ${params.segments.slice(0, index).join(".") || "<root>"}.`,
       );
     }
+    rejectDangerousKey(segment, params.segments.join("."));
     if (params.requireExistingSegment && !Object.prototype.hasOwnProperty.call(cursor, segment)) {
       throw new Error(
         `Path segment does not exist at ${params.segments.slice(0, index + 1).join(".")}.`,
@@ -82,6 +89,7 @@ export function getPath(root: unknown, segments: string[]): unknown {
     if (!isRecord(cursor)) {
       return undefined;
     }
+    rejectDangerousKey(segment, segments.join("."));
     cursor = cursor[segment];
   }
   return cursor;
@@ -122,6 +130,7 @@ export function setPathCreateStrict(
     if (!isRecord(cursor)) {
       throw new Error(`Invalid path shape at ${segments.slice(0, index).join(".") || "<root>"}.`);
     }
+    rejectDangerousKey(segment, segments.join("."));
     const existing = cursor[segment];
     if (existing === undefined || existing === null) {
       cursor[segment] = needs === "array" ? [] : {};
@@ -144,6 +153,7 @@ export function setPathCreateStrict(
   if (!isRecord(cursor)) {
     throw new Error(`Invalid path shape at ${segments.slice(0, -1).join(".") || "<root>"}.`);
   }
+  rejectDangerousKey(leaf, segments.join("."));
   if (!isDeepStrictEqual(cursor[leaf], value)) {
     cursor[leaf] = value;
     changed = true;
@@ -173,6 +183,7 @@ export function setPathExistingStrict(
   if (!isRecord(cursor)) {
     throw new Error(`Invalid path shape at ${segments.slice(0, -1).join(".") || "<root>"}.`);
   }
+  rejectDangerousKey(leaf, segments.join("."));
   if (!Object.prototype.hasOwnProperty.call(cursor, leaf)) {
     throw new Error(`Path segment does not exist at ${segments.join(".")}.`);
   }
@@ -199,6 +210,7 @@ export function deletePathStrict(root: Record<string, unknown>, segments: string
   if (!isRecord(cursor)) {
     throw new Error(`Invalid path shape at ${segments.slice(0, -1).join(".") || "<root>"}.`);
   }
+  rejectDangerousKey(leaf, segments.join("."));
   if (!Object.prototype.hasOwnProperty.call(cursor, leaf)) {
     return false;
   }
