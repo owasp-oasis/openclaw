@@ -94,13 +94,13 @@ function run(cmd, args) {
   try {
     child = spawn(cmd, args, createSpawnOptions(cmd, args));
   } catch (err) {
-    console.error(`Failed to launch ${cmd}:`, err);
+    console.error("Failed to launch %s:", cmd, err);
     process.exit(1);
     return;
   }
 
   child.on("error", (err) => {
-    console.error(`Failed to launch ${cmd}:`, err);
+    console.error("Failed to launch %s:", cmd, err);
     process.exit(1);
   });
   child.on("exit", (code) => {
@@ -115,7 +115,7 @@ function runSync(cmd, args, envOverride) {
   try {
     result = spawnSync(cmd, args, createSpawnOptions(cmd, args, envOverride));
   } catch (err) {
-    console.error(`Failed to launch ${cmd}:`, err);
+    console.error("Failed to launch %s:", cmd, err);
     process.exit(1);
     return;
   }
