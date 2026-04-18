@@ -164,7 +164,7 @@ describe("resolveControlUiLinks", () => {
       bind: "tailnet",
     });
     expect(links.httpUrl).toBe("http://100.64.0.9:18789/");
-    expect(links.wsUrl).toBe("ws://100.64.0.9:18789");
+    expect(links.wsUrl).toBe("wss://100.64.0.9:18789");
   });
 
   it("keeps loopback for auto even when tailnet is present", () => {

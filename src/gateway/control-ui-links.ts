@@ -30,8 +30,9 @@ export function resolveControlUiLinks(params: {
   const basePath = normalizeControlUiBasePath(params.basePath);
   const uiPath = basePath ? `${basePath}/` : "/";
   const wsPath = basePath ? basePath : "";
+  const wsScheme = bind === "tailnet" ? "wss" : "ws";
   return {
     httpUrl: `http://${host}:${port}${uiPath}`,
-    wsUrl: `ws://${host}:${port}${wsPath}`,
+    wsUrl: `${wsScheme}://${host}:${port}${wsPath}`,
   };
 }
