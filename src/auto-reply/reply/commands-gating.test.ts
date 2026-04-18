@@ -206,6 +206,9 @@ describe("command gating", () => {
       (target: Record<string, unknown>, path: string[], value: unknown) => {
         let cursor: Record<string, unknown> = target;
         for (const segment of path.slice(0, -1)) {
+          if (segment === "__proto__" || segment === "constructor" || segment === "prototype") {
+            return;
+          }
           const next = cursor[segment];
           if (!next || typeof next !== "object") {
             cursor[segment] = {};
@@ -214,6 +217,9 @@ describe("command gating", () => {
         }
         const leaf = path[path.length - 1];
         if (leaf) {
+          if (leaf === "__proto__" || leaf === "constructor" || leaf === "prototype") {
+            return;
+          }
           cursor[leaf] = value;
         }
       },
