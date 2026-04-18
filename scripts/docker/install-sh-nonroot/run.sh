@@ -29,7 +29,13 @@ node -e '
 command -v npm >/dev/null
 
 echo "==> Run installer (non-root user)"
-curl -fsSL "$INSTALL_URL" | bash
+INSTALL_TMPFILE="$(mktemp)"
+trap 'rm -f "$INSTALL_TMPFILE"' EXIT
+curl -fsSL -o "$INSTALL_TMPFILE" "$INSTALL_URL"
+if [[ -n "${OPENCLAW_INSTALL_SHA256:-}" ]]; then
+  echo "${OPENCLAW_INSTALL_SHA256}  ${INSTALL_TMPFILE}" | sha256sum -c -
+fi
+bash "$INSTALL_TMPFILE"
 
 # Ensure PATH picks up user npm prefix
 export PATH="$HOME/.npm-global/bin:$PATH"
