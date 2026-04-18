@@ -20,8 +20,7 @@ import type { GatewayDiscoverOpts } from "./discover.js";
 import {
   dedupeBeacons,
   parseDiscoverTimeoutMs,
-  pickBeaconHost,
-  pickGatewayPort,
+  pickBeaconWsUrl,
   renderBeaconLines,
 } from "./discover.js";
 import { addGatewayRunCommand } from "./run.js";
@@ -236,9 +235,7 @@ export function registerGatewayCli(program: Command) {
 
         if (opts.json) {
           const enriched = deduped.map((b) => {
-            const host = pickBeaconHost(b);
-            const port = pickGatewayPort(b);
-            return { ...b, wsUrl: host ? `ws://${host}:${port}` : null };
+            return { ...b, wsUrl: pickBeaconWsUrl(b) };
           });
           defaultRuntime.writeJson({
             timeoutMs,
