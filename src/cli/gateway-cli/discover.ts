@@ -20,6 +20,10 @@ export function pickGatewayPort(beacon: GatewayBonjourBeacon): number | null {
   return buildGatewayDiscoveryTarget(beacon).endpoint?.port ?? null;
 }
 
+export function pickBeaconWsUrl(beacon: GatewayBonjourBeacon): string | null {
+  return buildGatewayDiscoveryTarget(beacon).wsUrl;
+}
+
 export function dedupeBeacons(beacons: GatewayBonjourBeacon[]): GatewayBonjourBeacon[] {
   const out: GatewayBonjourBeacon[] = [];
   const seen = new Set<string>();
