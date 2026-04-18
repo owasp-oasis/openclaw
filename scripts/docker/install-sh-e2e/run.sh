@@ -72,13 +72,19 @@ else
 fi
 
 echo "==> Run official installer one-liner"
-if [[ "$INSTALL_TAG" == "beta" ]]; then
-  OPENCLAW_BETA=1 curl -fsSL "$INSTALL_URL" | bash
-elif [[ "$INSTALL_TAG" != "latest" ]]; then
-  OPENCLAW_VERSION="$INSTALL_TAG" curl -fsSL "$INSTALL_URL" | bash
-else
-  curl -fsSL "$INSTALL_URL" | bash
+INSTALLER_TMP="$(mktemp /tmp/openclaw-install.XXXXXX)"
+curl -fsSL "$INSTALL_URL" -o "$INSTALLER_TMP"
+if [[ -n "${OPENCLAW_INSTALL_SHA256:-}" ]]; then
+  echo "${OPENCLAW_INSTALL_SHA256}  ${INSTALLER_TMP}" | sha256sum --check --status
 fi
+if [[ "$INSTALL_TAG" == "beta" ]]; then
+  OPENCLAW_BETA=1 bash "$INSTALLER_TMP"
+elif [[ "$INSTALL_TAG" != "latest" ]]; then
+  OPENCLAW_VERSION="$INSTALL_TAG" bash "$INSTALLER_TMP"
+else
+  bash "$INSTALLER_TMP"
+fi
+rm -f "$INSTALLER_TMP"
 
 echo "==> Verify installed version"
 INSTALLED_VERSION="$(openclaw --version 2>/dev/null | head -n 1 | tr -d '\r')"
