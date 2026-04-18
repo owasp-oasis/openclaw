@@ -59,7 +59,7 @@ function parsePattern(raw: RedactPattern): RegExp | null {
     if (raw.flags.includes("g")) {
       return raw;
     }
-    return new RegExp(raw.source, `${raw.flags}g`);
+    return compileConfigRegex(raw.source, `${raw.flags}g`)?.regex ?? null;
   }
   if (!raw.trim()) {
     return null;
