@@ -4,7 +4,7 @@ import { PushTestResultSchema } from "./schema/push.js";
 
 describe("gateway protocol push schema", () => {
   const Ajv = AjvPkg as unknown as new (opts?: object) => import("ajv").default;
-  const ajv = new Ajv({ allErrors: true, strict: false });
+  const ajv = new Ajv({ strict: false });
   const validatePushTestResult = ajv.compile(PushTestResultSchema);
 
   it("accepts push.test results with a transport", () => {
