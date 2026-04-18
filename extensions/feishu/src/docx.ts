@@ -714,7 +714,7 @@ async function processImages(
 
       processed++;
     } catch (err) {
-      console.error(`Failed to process image ${url}:`, err);
+      console.error("Failed to process image:", url, err);
     }
   }
 
